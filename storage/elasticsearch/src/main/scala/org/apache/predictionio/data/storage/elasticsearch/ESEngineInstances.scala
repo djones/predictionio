@@ -191,13 +191,14 @@ class ESEngineInstances(client: RestClient, config: StorageClientConfig, index: 
         s"/$index/$estype/$id",
         Map("refresh" -> "true").asJava,
         entity)
-      val jsonResponse = parse(EntityUtils.toString(response.getEntity))
+      val stringResponse = EntityUtils.toString(response.getEntity)
+      val jsonResponse = parse(stringResponse)
       val result = (jsonResponse \ "result").extract[String]
       result match {
         case "created" =>
         case "updated" =>
         case _ =>
-          error(s"[$result] Failed to update $index/$estype/$id")
+          error(s"[$result] Failed to update $index/$estype/$id/ response: $stringResponse")
       }
     } catch {
       case e: IOException =>
