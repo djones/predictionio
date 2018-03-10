@@ -198,11 +198,11 @@ class ESEngineInstances(client: RestClient, config: StorageClientConfig, index: 
         case "created" =>
         case "updated" =>
         case _ =>
-          error(s"[$result] Failed to update $index/$estype/$id/ response: $stringResponse")
+          error(s"[$result] Failed to update $index/$estype/$id/ response 1: $stringResponse")
       }
     } catch {
       case e: IOException =>
-        error(s"Failed to update $index/$estype/$id", e)
+        error(s"Failed to update $index/$estype/$id response 3: $e", e)
     }
   }
 
@@ -212,16 +212,17 @@ class ESEngineInstances(client: RestClient, config: StorageClientConfig, index: 
         "DELETE",
         s"/$index/$estype/$id",
         Map("refresh" -> "true").asJava)
+      val stringResponse = EntityUtils.toString(response.getEntity)
       val json = parse(EntityUtils.toString(response.getEntity))
       val result = (json \ "result").extract[String]
       result match {
         case "deleted" =>
         case _ =>
-          error(s"[$result] Failed to update $index/$estype/$id")
+          error(s"[$result] Failed to update $index/$estype/$id response 2: $stringResponse")
       }
     } catch {
       case e: IOException =>
-        error(s"Failed to update $index/$estype/$id", e)
+        error(s"Failed to update $index/$estype/$id response 4: $e", e)
     }
   }
 }
